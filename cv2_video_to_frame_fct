@@ -1,0 +1,38 @@
+import cv2
+
+def video_to_frames(vid_path: str, start_second: int, end_second: int):
+    """
+     Load a video and return its frames from the wanted time range.
+     :param vid_path: video file path.
+     :param start_second: time of first frame to be taken from the video in seconds.
+     :param end_second: time of last frame to be taken from the video in seconds.
+     :return:
+     frame_set: a 4D uint8 np array of size [num_of_frames x H x W x C] containing the wanted video frames in BGR format.
+     """
+
+    #
+    vid_capt = cv2.VideoCapture(vid_path)
+    if (vid_capt.isOpened() == False):
+        print("Error opening the video file")
+
+    # Video characteristics
+    frame_width, frame_height = int(vid_capt.get(cv2.CAP_PROP_FRAME_WIDTH)), int(
+        vid_capt.get(cv2.CAP_PROP_FRAME_HEIGHT))
+    fps, frame_tot = int(vid_capt.get(cv2.CAP_PROP_FPS)), int(vid_capt.get(cv2.CAP_PROP_FRAME_COUNT))
+
+    vid_capt.set(cv2.CAP_PROP_POS_FRAMES, fps * start_second)
+    frame_i = 0
+    ret = True
+    if (end_second != start_second):
+        frame_needed = (end_second - start_second) * fps
+    else:
+        frame_needed = 1
+    frame_set = np.empty((frame_needed, frame_height, frame_width, 3), np.dtype('uint8'))
+
+    while (frame_i < frame_needed and ret):
+        ret, frame_set[frame_i] = vid_capt.read()
+        frame_i += 1
+
+    vid_capt.release()
+
+    return frame_set  # end video_to_frames fct
