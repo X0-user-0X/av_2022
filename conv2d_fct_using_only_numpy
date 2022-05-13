@@ -19,8 +19,8 @@ def conv2D_full(h_mat, x_mat):
     row_max = max(h_mat.shape[0], x_mat.shape[0]); row_min = min(h_mat.shape[0], x_mat.shape[0]);
     col_max = max(h_mat.shape[1], x_mat.shape[1]); col_min = min(h_mat.shape[1], x_mat.shape[1]);
 
-    small_mat=h_mat if (h_mat.shape[0]==row_min) else x_mat;
-    big_mat = x_mat if (x_mat.shape[0]==row_max) else h_mat;
+    small_mat = h_mat if (h_mat.shape[0]==row_min and h_mat.shape[1]==col_min) else x_mat;
+    big_mat = x_mat if (x_mat.shape[0]==row_max and x_mat.shape[1]==col_max) else h_mat;
 
     i,j,k,l = 0,0,0,0; #i, k row; j,l col
     stop_j = col_max+col_min-1; stop_i = row_max+row_min-1; #get final size of the full conv2D
