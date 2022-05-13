@@ -1,0 +1,81 @@
+#IMPORTANT: 
+#1- I am learning python and coding so sorry when the code syntax is not perfect (like semi colon). But it is very easy to edit.
+#2- The 2D convolution functions treats the case where one of the two matrices has her  width and her height greater or equal to the, respectively, widht and height of the other one
+#3- I hope the code is correct, i ve used it at least 100 times and it always work well.
+#4- Btw i think the complexity is O(N^4), with N=max(width matrice1, height matrice1,width matrice2, height matrice2)
+#5- I share this code because i didn't find one like this on the internet, i hope in the future it will be able to help somebody! :-) 
+
+import numpy as np
+
+#import used to verify the correctness of our 2d convolution (full and same) function.
+import scipy as sp
+from scipy import signal
+
+
+
+# 2d full convolution
+
+def conv2D_full(h_mat, x_mat):
+    row_max = max(h_mat.shape[0], x_mat.shape[0]); row_min = min(h_mat.shape[0], x_mat.shape[0]);
+    col_max = max(h_mat.shape[1], x_mat.shape[1]); col_min = min(h_mat.shape[1], x_mat.shape[1]);
+
+    small_mat=h_mat if (h_mat.shape[0]==row_min) else x_mat;
+    big_mat=h_mat if (h_mat.shape[0]==row_max) else x_mat;
+
+    i,j,k,l = 0,0,0,0; #i, k row; j,l col
+    stop_j = col_max+col_min-1; stop_i = row_max+row_min-1; #get final size of the full conv2D
+    sum=0;
+
+    y_mat_full = np.zeros((stop_i, stop_j));
+
+    while i < stop_i:
+        while j < stop_j:
+            while k < row_min:
+                while l < col_min:
+                    sum += (small_mat[k][l]*big_mat[i-k][j-l]) if((0 <= i-k < row_max) and (0 <= j-l < col_max)) else 0;
+                    l += 1;
+                l=0; k += 1;
+            y_mat_full[i][j] = sum; sum = 0;
+            k=0; j += 1;
+        j=0; i += 1;
+
+    # Verif the correctness of the conv2D using scipy
+    print("conv2D_full:Does the result is correct?", (np.round(sp.signal.convolve2d(h_mat,x_mat, mode="full"),4) == np.round(y_mat_full, 4)).all());
+    small_mat = None; big_mat = None;
+
+    return y_mat_full;
+
+# 2d same convolution
+def conv2D_same(h_mat, x_mat):
+    y_mat_full = conv2D_full(h_mat, x_mat);
+    conv_full_height = y_mat_full.shape[0]-1; conv_full_width = y_mat_full.shape[1]-1;
+
+    height = h_mat.shape[0]-1; width = h_mat.shape[1]-1;
+    height_dist = int(np.floor((conv_full_height - height)/2)); width_dist = int(np.floor((conv_full_width - width)/2));
+
+    y_mat_same = y_mat_full[height_dist:height+height_dist+1, width_dist:width+width_dist+1];
+
+    # Verif the correctness of the conv2D using scipy
+    print("conv2D_same:Does the result is correct?", (np.round(sp.signal.convolve2d(h_mat,x_mat, mode="same"),4) == np.round(y_mat_same, 4)).all());
+    y_mat_full = None;
+    return y_mat_same;
+
+def conv2D (h_mat, x_mat, mode: str ):
+    if (not((h_mat.shape[0]>= x_mat.shape[0] and h_mat.shape[1]>= x_mat.shape[1]) or
+            (h_mat.shape[0]<= x_mat.shape[0] and h_mat.shape[1]<= x_mat.shape[1]))):
+        return print("Error input matrixes dim size are not supported.");
+
+    if mode == "full":
+        return conv2D_full(h_mat, x_mat);
+    if mode == "same":
+        return conv2D_same(h_mat, x_mat);
+
+    return print("Error in conv2D fct.");
+
+#for testing
+print("-Starting of testing conv2D-");
+h = np.random.rand(11, 31);x = np.random.rand(52, 51);
+y_mat_same = conv2D(h,x, mode="same");
+print("-End of testing conv2D-");
+
+#end - My first time and code on github :-D
