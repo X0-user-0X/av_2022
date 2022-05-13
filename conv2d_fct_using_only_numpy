@@ -1,7 +1,7 @@
 #IMPORTANT: 
 #1- I am learning python and coding so sorry when the code syntax is not perfect (like semi colon). But it is very easy to edit.
 #2- The 2D convolution functions treats the case where one of the two matrices has her  width and her height greater or equal to the, respectively, widht and height of the other one
-#3- I hope the code is correct, i ve used it at least 100 times and it always work well.
+#3- I hope the code is correct.
 #4- Btw i think the complexity is O(N^4), with N=max(width matrice1, height matrice1,width matrice2, height matrice2)
 #5- I share this code because i didn't find one like this on the internet, i hope in the future it will be able to help somebody! :-) 
 
